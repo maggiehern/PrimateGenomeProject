@@ -423,9 +423,9 @@ chisq_Activity_Genomic$residuals
 
 #boxplots
 
-ggplot(PGP_Data, aes(x=PGP_Data$Genomic_Data, y=PGP_Data$log.Research_intensity_strict)) + geom_boxplot(fill="grey")
-ggplot(PGP_Data, aes(x=PGP_Data$Genomic_Data, y=PGP_Data$log.Research_intensity_relaxed)) + geom_boxplot(fill="grey")
-ggplot(PGP_Data, aes(x=PGP_Data$Genomic_Data, y=PGP_Data$log.Importance_in_medical_research)) + geom_boxplot(fill="grey")
-ggplot(PGP_Data, aes(x=PGP_Data$Genomic_Data, y=PGP_Data$log.Frequency_in_captivity)) + geom_boxplot(fill="grey")
-ggplot(PGP_Data, aes(x=PGP_Data$Genomic_Data, y=PGP_Data$Mya_since_LCA)) + geom_boxplot(fill="grey")
-ggplot(PGP_Data, aes(x=PGP_Data$Genomic_Data, y=PGP_Data$log.Geographical_range_sq_km)) + geom_boxplot(fill="grey")
+ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=log.Research_intensity_strict)) + geom_boxplot(fill="grey")
+ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=log.Research_intensity_relaxed)) + geom_boxplot(fill="grey")
+ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=log.Importance_in_medical_research)) + geom_boxplot(fill="grey")
+ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=log.Frequency_in_captivity)) + geom_boxplot(fill="grey")
+ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=Mya_since_LCA)) + geom_boxplot(fill="grey")
+ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=log.Geographical_range_sq_km)) + geom_boxplot(fill="grey")
