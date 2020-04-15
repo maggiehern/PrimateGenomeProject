@@ -11,7 +11,7 @@ library(hexbin)
 
 #Data files needed. Import these into your global environment as excel files. 
 #PGP_Data_FINAL
-#Codes_and_Quantities
+#Codes_and_Quantities (Sheet 1 as "Codes_and_Quantities" and Sheet 2 as "Codes_and_Quantities2")
 
 #Log transformations for variables 
 
@@ -106,6 +106,9 @@ ggplot(genus.counts, aes(x=0, y=Genus, col=log.Mbases)) + geom_point(pch=15, siz
 
 ggplot(Codes_and_Quantities, aes(x=0, y=Code, col=Quantity)) + geom_point(pch=15, size=5) +
   scale_color_gradient(low='#e8e6f4', high='#8b483d') + theme_bw()
+
+ggplot(Codes_and_Quantities2, aes(x=0, y=Code, col=Total_Mention)) + geom_point(pch=15, size=5) +
+  scale_color_gradient(low='#e8e6f4', high='#0000b3') + theme_bw()
 
 #Linear regressions with all data  
 
