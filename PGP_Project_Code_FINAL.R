@@ -374,6 +374,9 @@ scale_fill_manual(values=c("#483d8b", "#504490", "#534691", "#574a94", "#5b4e97"
 
 #logistical regeressions on entire dataset
 
+PGP_Data_FINAL$Red_List_status <- factor(PGP_Data_FINAL$Red_List_status , levels=c("CR", "DD", "EN", "LC", "NT", "VU"))
+
+
 mylogit1 <- glm(Genomic_Data_Code ~ log.Importance_in_medical_research + 
                   log.Mya_since_LCA + log.RIR_MP + log.Frequency_in_captivity + 
                   as.numeric(log.Geographical_range_sq_km) +Activity_pattern + Red_List_status, data = PGP_Data_FINAL, family = "binomial")
@@ -393,7 +396,7 @@ agostino.test(residuals(GLMGau1))
 
 #subset with genomic data
 
-GLMGau2<-glm(formula = log.Mbases ~ log.Importance_in_medical_research + 
+GLMGau2<-lm(formula = log.Mbases ~ log.Importance_in_medical_research + 
                log.Mya_since_LCA + log.RIR_MP + log.Frequency_in_captivity + 
                as.numeric(log.Geographical_range_sq_km) +Activity_pattern + Red_List_status, 
              family = "gaussian", data = PGP_Data_Genomic_Present)
