@@ -3,15 +3,25 @@ install.packages("ggplot2")
 install.packages("moments")
 install.packages("gridExtra")
 install.packages("hexbin")
+install.packages("readxl")
+
 
 library(ggplot2)
 library(moments)
 library(gridExtra)
 library(hexbin)
+library(readxl)
+
 
 #Data files needed. Import these into your global environment as excel files. 
 #PGP_Data_FINAL
-#Codes_and_Quantities (Sheet 1 as "Codes_and_Quantities" and Sheet 2 as "Codes_and_Quantities2")
+#Codes_and_Quantities
+
+PGP_Data_FINAL<-read_excel("PGP_Data_FINAL.xlsx")
+View(PGP_Data_FINAL)
+
+Codes_and_Quantities <- read_excel("Codes_and_Quantities.xlsx")
+View(Codes_and_Quantities)
 
 #Log transformations for variables 
 
@@ -31,9 +41,10 @@ PGP_Data_FINAL$log.Geographical_range_sq_km = log10(as.numeric(PGP_Data_FINAL$Ge
 PGP_Data_FINAL$log.Frequency_in_captivity = log10(PGP_Data_FINAL$Frequency_in_captivity)
 PGP_Data_FINAL[PGP_Data_FINAL$log.Frequency_in_captivity == -Inf,]$log.Frequency_in_captivity = 0
 
-#code for t tests
+#Code for independent 2-group Mann-Whitney U Test
 
-t.test(PGP_Data_FINAL$RIR_MP ~PGP_Data_FINAL$Genomic_Data)
+wilcox.test(PGP_Data_FINAL$RIR_MP ~PGP_Data_FINAL$Genomic_Data)
+tapply(PGP_Data_FINAL$RIR_MP, PGP_Data_FINAL$Genomic_Data, median)
 tapply(PGP_Data_FINAL$RIR_MP, PGP_Data_FINAL$Genomic_Data, mean)
 tapply(PGP_Data_FINAL$RIR_MP, PGP_Data_FINAL$Genomic_Data, sd)
 mean(PGP_Data_FINAL$RIR_MP[PGP_Data_FINAL$Genomic_Data=="Absent"])
@@ -41,7 +52,8 @@ mean(PGP_Data_FINAL$RIR_MP[PGP_Data_FINAL$Genomic_Data=="Present"])
 ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=log.RIR_MP)) + 
   geom_boxplot(fill="dark grey") +theme_minimal() + ylim(0,5)
 
-t.test(PGP_Data_FINAL$Mya_since_LCA ~PGP_Data_FINAL$Genomic_Data)
+wilcox.test(PGP_Data_FINAL$Mya_since_LCA ~PGP_Data_FINAL$Genomic_Data)
+tapply(PGP_Data_FINAL$Mya_since_LCA, PGP_Data_FINAL$Genomic_Data, median)
 tapply(PGP_Data_FINAL$Mya_since_LCA, PGP_Data_FINAL$Genomic_Data, mean)
 tapply(PGP_Data_FINAL$Mya_since_LCA, PGP_Data_FINAL$Genomic_Data, sd)
 mean(PGP_Data_FINAL$Mya_since_LCA[PGP_Data_FINAL$Genomic_Data=="Absent"])
@@ -49,7 +61,8 @@ mean(PGP_Data_FINAL$Mya_since_LCA[PGP_Data_FINAL$Genomic_Data=="Present"])
 ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=Mya_since_LCA)) + 
   geom_boxplot(fill="dark grey") +theme_minimal() +ylim(0,80)
 
-t.test(PGP_Data_FINAL$Importance_in_medical_research ~PGP_Data_FINAL$Genomic_Data)
+wilcox.test(PGP_Data_FINAL$Importance_in_medical_research ~PGP_Data_FINAL$Genomic_Data)
+tapply(PGP_Data_FINAL$Importance_in_medical_research, PGP_Data_FINAL$Genomic_Data, median)
 tapply(PGP_Data_FINAL$Importance_in_medical_research, PGP_Data_FINAL$Genomic_Data, mean)
 tapply(PGP_Data_FINAL$Importance_in_medical_research, PGP_Data_FINAL$Genomic_Data, sd)
 mean(PGP_Data_FINAL$Importance_in_medical_research[PGP_Data_FINAL$Genomic_Data=="Absent"])
@@ -57,15 +70,18 @@ mean(PGP_Data_FINAL$Importance_in_medical_research[PGP_Data_FINAL$Genomic_Data==
 ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=log.Importance_in_medical_research)) + 
   geom_boxplot(fill="dark grey") +theme_minimal() +ylim(0,5)
 
-t.test(as.numeric(PGP_Data_FINAL$Geographical_range_sq_km) ~PGP_Data_FINAL$Genomic_Data)
-tapply(PGP_Data_FINAL$Geographical_range_sq_km, PGP_Data_FINAL$Genomic_Data, mean)
-tapply(PGP_Data_FINAL$Geographical_range_sq_km, PGP_Data_FINAL$Genomic_Data, sd)
+PGP_Data_NA_Geo_Removed<- PGP_Data_FINAL[- grep("NA", PGP_Data_FINAL$Geographical_range_sq_km),]
+wilcox.test(as.numeric(PGP_Data_FINAL$Geographical_range_sq_km) ~PGP_Data_FINAL$Genomic_Data)
+tapply(as.numeric(PGP_Data_NA_Geo_Removed$Geographical_range_sq_km), PGP_Data_NA_Geo_Removed$Genomic_Data, median)
+tapply(as.numeric(PGP_Data_NA_Geo_Removed$Geographical_range_sq_km), PGP_Data_NA_Geo_Removed$Genomic_Data, mean)
+tapply(as.numeric(PGP_Data_NA_Geo_Removed$Geographical_range_sq_km), PGP_Data_NA_Geo_Removed$Genomic_Data, sd)
 mean(PGP_Data_FINAL$Geographical_range_sq_km[PGP_Data_FINAL$Genomic_Data=="Absent"])
 mean(PGP_Data_FINAL$Geographical_range_sq_km[PGP_Data_FINAL$Genomic_Data=="Present"])
 ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=log.Geographical_range_sq_km)) + 
   geom_boxplot(fill="dark grey") +theme_minimal() +ylim(0,5)
 
-t.test(PGP_Data_FINAL$Frequency_in_captivity ~PGP_Data_FINAL$Genomic_Data)
+wilcox.test(PGP_Data_FINAL$Frequency_in_captivity ~PGP_Data_FINAL$Genomic_Data)
+tapply(PGP_Data_FINAL$Frequency_in_captivity, PGP_Data_FINAL$Genomic_Data, median)
 tapply(PGP_Data_FINAL$Frequency_in_captivity, PGP_Data_FINAL$Genomic_Data, mean)
 tapply(PGP_Data_FINAL$Frequency_in_captivity, PGP_Data_FINAL$Genomic_Data, sd)
 mean(PGP_Data_FINAL$Frequency_in_captivity[PGP_Data_FINAL$Genomic_Data=="Absent"])
@@ -107,9 +123,6 @@ ggplot(genus.counts, aes(x=0, y=Genus, col=log.Mbases)) + geom_point(pch=15, siz
 ggplot(Codes_and_Quantities, aes(x=0, y=Code, col=Quantity)) + geom_point(pch=15, size=5) +
   scale_color_gradient(low='#e8e6f4', high='#8b483d') + theme_bw()
 
-ggplot(Codes_and_Quantities2, aes(x=0, y=Code, col=Total_Mention)) + geom_point(pch=15, size=5) +
-  scale_color_gradient(low='#e8e6f4', high='#0000b3') + theme_bw()
-
 #Linear regressions with all data  
 
 linearMod1 <- lm(PGP_Data_FINAL$log.Mbases~PGP_Data_FINAL$log.RIR_MP)
@@ -148,6 +161,7 @@ shapiro.test(residuals(linearMod5))
 agostino.test(residuals(linearMod5))
 
 #Data Deficient (DD) variable removed since it could not be placed within the logical order of the different statuses 
+PGP_Data_DD_Removed<- subset(PGP_Data_FINAL, Red_List_status != "DD")
 PGP_Data_DD_Removed$log.Mbases = log10(PGP_Data_DD_Removed$Mbases)
 PGP_Data_DD_Removed[PGP_Data_DD_Removed$log.Mbases == -Inf,]$log.Mbases = 0
 
@@ -339,6 +353,7 @@ grid.arrange(p5,p6,ncol=2)
 ggplot(PGP_Data_FINAL, aes(x= as.character(PGP_Data_FINAL$Red_list_code), y=PGP_Data_FINAL$log.Mbases)) + 
   geom_violin(fill="dark grey", color="dark grey") + geom_hex(bins = 60) 
 
+PGP_Data_Activity_NA_Removed <- subset(PGP_Data_FINAL, Activity_pattern != "NA")
 PGP_Data_Activity_NA_Removed$log.Mbases = log10(PGP_Data_Activity_NA_Removed$Mbases)
 PGP_Data_Activity_NA_Removed[PGP_Data_Activity_NA_Removed$log.Mbases == -Inf,]$log.Mbases = 0
 
@@ -347,6 +362,183 @@ ggplot(PGP_Data_Activity_NA_Removed, aes(x=Activity_pattern, y=log.Mbases)) +
   scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
   theme(legend.position="right") + scale_y_continuous(limits = c(-8, 8), breaks = seq(-8,8, by =2))+
   xlab('Activity Pattern') + ylab("Megabases of Genomic Data") + theme(legend.position="none")+theme_minimal() +theme(legend.position="right")
+
+#Figures running the variables against one another 
+
+ggplot(PGP_Data_FINAL, aes(x=log.Importance_in_medical_research, y=log.RIR_MP)) +
+  geom_hex(bins = 60) +
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal() +theme(legend.position="right") +
+  theme(legend.position="none")
+
+ggplot(PGP_Data_FINAL, aes(x=log.Mya_since_LCA, y=log.RIR_MP)) +
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal() +theme(legend.position="right")+
+  theme(legend.position="none") + xlim(0,2)
+
+ggplot(PGP_Data_FINAL, aes(x=log.Geographical_range_sq_km, y=log.RIR_MP)) +
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal() +theme(legend.position="right") +
+  theme(legend.position="none") + ylim(-1,5)+xlim(0,7)
+
+ggplot(PGP_Data_FINAL, aes(x=log.Frequency_in_captivity, y=log.RIR_MP)) +
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal()+theme(legend.position="right") +
+  theme(legend.position="none")
+
+ggplot(PGP_Data_DD_Removed, aes(x=as.character(Red_list_code), y=log.RIR_MP)) +
+  geom_violin(fill="gray90", color="gray90")+
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method = "lm", se=FALSE, color="#808b3d", aes(group=1)) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal()+theme(legend.position="none")
+
+ggplot(PGP_Data_Activity_NA_Removed, aes(x=Activity_pattern, y=log.RIR_MP)) +
+  geom_violin(fill="gray90", color="gray90") + stat_binhex(bins = 60) +
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  theme_minimal() +theme(legend.position="none")
+
+ggplot(PGP_Data_FINAL, aes(x=log.Mya_since_LCA, y=log.Importance_in_medical_research)) +
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal() +theme(legend.position="none") +
+  xlim(0,2)
+
+ggplot(PGP_Data_FINAL, aes(x=log.Geographical_range_sq_km, y=log.Importance_in_medical_research)) +
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal() +theme(legend.position="none") +
+  xlim(0,7)
+
+ggplot(PGP_Data_FINAL, aes(x=log.Frequency_in_captivity, y=log.Importance_in_medical_research)) +
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal() +theme(legend.position="none")
+
+ggplot(PGP_Data_FINAL, aes(x=log.Mya_since_LCA, y=log.Geographical_range_sq_km)) +
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal() +theme(legend.position="none")+
+  ylim(0,8)+xlim(0,2)
+
+ggplot(PGP_Data_FINAL, aes(x=log.Frequency_in_captivity, y=log.Geographical_range_sq_km)) +
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal() +theme(legend.position="none") +ylim(0,8)
+
+ggplot(PGP_Data_DD_Removed, aes(x=as.character(Red_list_code), y=log.Geographical_range_sq_km)) + 
+  geom_violin(fill="gray90", color="gray90")+
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method = "lm", se=FALSE, color="#808b3d", aes(group=1)) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal()+theme(legend.position="none") + ylim(0,8) 
+  
+ggplot(PGP_Data_Activity_NA_Removed, aes(x=Activity_pattern, log.Geographical_range_sq_km)) +
+  geom_violin(fill="gray90", color="gray90") + stat_binhex(bins = 60) +
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  theme_minimal() +theme(legend.position="none")+ylim(0,8)
+
+ggplot(PGP_Data_FINAL, aes(x=log.Mya_since_LCA, y=log.Frequency_in_captivity)) +
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal() +theme(legend.position="none")+ylim(-1,5) +xlim(0,2)
+
+ggplot(PGP_Data_DD_Removed, aes(x=as.character(Red_list_code), y=log.Frequency_in_captivity)) +
+  geom_violin(fill="gray90", color="gray90")+
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method = "lm", se=FALSE, color="#808b3d", aes(group=1)) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal()+theme(legend.position="none")
+
+ggplot(PGP_Data_Activity_NA_Removed, aes(x=Activity_pattern, y=log.Frequency_in_captivity)) +
+  geom_violin(fill="gray90", color="gray90") + stat_binhex(bins = 60) +
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  theme_minimal() +theme(legend.position="none")
+
+#used geom jitter here instead
+
+ggplot(PGP_Data_DD_Removed, aes(x=as.character(Red_list_code), y=log.Importance_in_medical_research)) +
+  geom_violin(fill="gray90", color="gray90")+geom_jitter(color="gray60")+
+  geom_smooth(method = "lm", se=FALSE, color="#808b3d", aes(group=1)) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal()+theme(legend.position="none")
+
+ggplot(PGP_Data_Activity_NA_Removed, aes(x=Activity_pattern, y=log.Importance_in_medical_research)) +
+  geom_violin(fill="gray90", color="gray90") + geom_jitter(color="gray60") +
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  theme_minimal() +theme(legend.position="none")
+
+ggplot(PGP_Data_DD_Removed, aes(x=as.character(Red_list_code), y=log.Mya_since_LCA)) +
+  geom_violin(fill="gray90", color="gray90")+ geom_jitter(color="gray60")+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method = "lm", se=FALSE, color="#808b3d", aes(group=1)) +
+  scale_color_manual(values=c("transparent", "#8b3d80")) + theme_minimal()+theme(legend.position="none") +ylim(0,2)
+
+ggplot(PGP_Data_Activity_NA_Removed, aes(x=Activity_pattern, y=log.Mya_since_LCA)) +
+  geom_violin(fill="gray90", color="gray90") +  geom_jitter(color="gray60")+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  theme_minimal() +theme(legend.position="none") +ylim(0,2)
+
+  #linear models
+
+linearMod13 <- lm(log.RIR_MP~log.Importance_in_medical_research, data=PGP_Data_FINAL)
+summary(linearMod13) 
+
+linearMod14 <- lm(log.RIR_MP~log.Mya_since_LCA, data=PGP_Data_FINAL)
+summary(linearMod14) 
+
+linearMod15 <- lm(log.RIR_MP~log.Geographical_range_sq_km, data=PGP_Data_FINAL)
+summary(linearMod15) 
+
+linearMod16 <- lm(log.RIR_MP~log.Frequency_in_captivity, data=PGP_Data_FINAL)
+summary(linearMod16) 
+
+linearMod17 <- lm(log.RIR_MP~Red_list_code, data=PGP_Data_DD_Removed)
+summary(linearMod17)
+
+linearMod18 <- lm(log.Importance_in_medical_research~log.Mya_since_LCA, data=PGP_Data_FINAL)
+summary(linearMod18)
+
+linearMod19 <- lm(log.Importance_in_medical_research~log.Geographical_range_sq_km, data=PGP_Data_FINAL)
+summary(linearMod19)
+
+linearMod20 <- lm(log.Importance_in_medical_research~log.Frequency_in_captivity, data=PGP_Data_FINAL)
+summary(linearMod20)
+
+linearMod21 <- lm(log.Importance_in_medical_research~Red_list_code, data=PGP_Data_DD_Removed)
+summary(linearMod21)
+
+linearMod22 <- lm(log.Geographical_range_sq_km~log.Mya_since_LCA, data=PGP_Data_FINAL)
+summary(linearMod22)
+
+linearMod23 <- lm(log.Geographical_range_sq_km~log.Frequency_in_captivity, data=PGP_Data_FINAL)
+summary(linearMod23)
+
+linearMod24 <- lm(log.Geographical_range_sq_km~Red_list_code, data=PGP_Data_DD_Removed)
+summary(linearMod24)
+
+linearMod25 <- lm(log.Frequency_in_captivity ~log.Mya_since_LCA, data=PGP_Data_FINAL)
+summary(linearMod25)
+
+linearMod26 <- lm(log.Frequency_in_captivity~Red_list_code, data=PGP_Data_DD_Removed)
+summary(linearMod26)
+
+linearMod27 <- lm(log.Mya_since_LCA~Red_list_code, data=PGP_Data_DD_Removed)
+summary(linearMod27)
+
+
 
 #cumulative percentage plot
 
@@ -374,9 +566,6 @@ scale_fill_manual(values=c("#483d8b", "#504490", "#534691", "#574a94", "#5b4e97"
 
 #logistical regeressions on entire dataset
 
-PGP_Data_FINAL$Red_List_status <- factor(PGP_Data_FINAL$Red_List_status , levels=c("CR", "DD", "EN", "LC", "NT", "VU"))
-
-
 mylogit1 <- glm(Genomic_Data_Code ~ log.Importance_in_medical_research + 
                   log.Mya_since_LCA + log.RIR_MP + log.Frequency_in_captivity + 
                   as.numeric(log.Geographical_range_sq_km) +Activity_pattern + Red_List_status, data = PGP_Data_FINAL, family = "binomial")
@@ -396,7 +585,7 @@ agostino.test(residuals(GLMGau1))
 
 #subset with genomic data
 
-GLMGau2<-lm(formula = log.Mbases ~ log.Importance_in_medical_research + 
+GLMGau2<-glm(formula = log.Mbases ~ log.Importance_in_medical_research + 
                log.Mya_since_LCA + log.RIR_MP + log.Frequency_in_captivity + 
                as.numeric(log.Geographical_range_sq_km) +Activity_pattern + Red_List_status, 
              family = "gaussian", data = PGP_Data_Genomic_Present)
@@ -435,3 +624,78 @@ ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=log.Importance_in_medical_research)
 ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=log.Frequency_in_captivity)) + geom_boxplot(fill="grey")
 ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=Mya_since_LCA)) + geom_boxplot(fill="grey")
 ggplot(PGP_Data_FINAL, aes(x=Genomic_Data, y=log.Geographical_range_sq_km)) + geom_boxplot(fill="grey")
+
+#Leave One Out Validation Approach 
+
+library(lattice)
+library(caret)
+
+data_ctrl <- trainControl(method = "LOOCV", savePredictions = "final")
+
+  #Entire dataset 
+
+LOOCV1 <- train(log.Mbases ~ log.Importance_in_medical_research + 
+                       log.Mya_since_LCA + log.RIR_MP + log.Frequency_in_captivity + 
+                       as.numeric(log.Geographical_range_sq_km) +Activity_pattern + Red_List_status,  
+                     data = PGP_Data_FINAL,                        
+                     trControl = data_ctrl,             
+                     method = "lm",
+                     na.action = na.pass)
+
+write.csv(LOOCV1$pred, "LOOCV1_Data.csv")
+LOOCV1_Data <- read.csv("C:/Users/maggi/Box/Penn State/Master's/Primate Genome R Project/LOOCV1_Data.csv")
+
+ggplot(LOOCV1_Data, aes(x=pred, y=obs))+geom_point()
+
+LOOCV_p1 <- ggplot(LOOCV1_Data, aes(x=obs, y=pred))+
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) + theme_minimal()+xlim(-1,11)+
+  theme(legend.position="right") +expand_limits(x = 0, y = 0) +theme(legend.position="none") +ylim(-1,11)
+
+ggplot(LOOCV1_Data, aes(x=obs, y=pred))+
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) + theme_minimal()+xlim(-1,11)+
+  theme(legend.position="right") +expand_limits(x = 0, y = 0) +theme(legend.position="right") +ylim(-1,11)
+
+linearModLOOCV1 <- lm(formula = LOOCV1_Data$pred ~ LOOCV1_Data$obs)
+summary(linearModLOOCV1)
+
+
+  #Only species with genomic data present
+
+LOOCV2 <- train(log.Mbases ~ log.Importance_in_medical_research + 
+                  log.Mya_since_LCA + log.RIR_MP + log.Frequency_in_captivity + 
+                  as.numeric(log.Geographical_range_sq_km) +Activity_pattern + Red_List_status,  
+                data = PGP_Data_Genomic_Present,                        
+                trControl = data_ctrl,             
+                method = "lm",
+                na.action = na.pass)
+
+write.csv(LOOCV2$pred, "LOOCV2_Data.csv")
+LOOCV2_Data <- read.csv("C:/Users/maggi/Box/Penn State/Master's/Primate Genome R Project/LOOCV2_Data.csv")
+
+
+LOOCV_p2 <- ggplot(LOOCV2_Data, aes(x=obs, y=pred))+
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) + theme_minimal()+ylim(-1,11)+ xlim(-1,11)+
+  theme(legend.position="right")+expand_limits(x = 0, y = 0) +theme(legend.position="none") +theme(axis.text.y = element_blank(), 
+                                                                                                   axis.ticks.y = element_blank(), 
+                                                                                                   axis.title.y = element_blank())
+
+ggplot(LOOCV2_Data, aes(x=obs, y=pred))+
+  geom_hex(bins = 60)+
+  scale_fill_gradientn(colours=c("gray60","#8b483d"),name = "Number of Species",na.value=NA) +
+  geom_smooth(method=lm, color="#808b3d", size=2) + theme_minimal()+ylim(-1,11)+ xlim(-1,11)+
+  theme(legend.position="right")+expand_limits(x = 0, y = 0) +theme(legend.position="right") +theme(axis.text.y = element_blank(), 
+                                                                                                   axis.ticks.y = element_blank(), 
+                                                                                                   axis.title.y = element_blank())
+
+linearModLOOCV2 <- lm(formula = LOOCV2_Data$pred ~ LOOCV2_Data$obs)
+summary(linearModLOOCV2)
+
+
+grid.arrange(LOOCV_p1,LOOCV_p2,ncol=2)
+
